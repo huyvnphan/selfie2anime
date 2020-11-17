@@ -170,12 +170,12 @@ class AnimeModule(pl.LightningModule):
             self.genB2A.apply(self.Rho_clipper)
 
             d_loss = self.discriminator_loss(real_A, real_B)
-            self.log("d_loss", d_loss, on_epoch=True, prog_bar=True)
+            self.log("d_loss", d_loss, on_epoch=False, prog_bar=True)
             return d_loss
         else:
             # use the generator loss for checkpointing
             g_loss = self.generator_loss(real_A, real_B)
-            self.log("g_loss", g_loss, on_epoch=True, prog_bar=True)
+            self.log("g_loss", g_loss, on_epoch=False, prog_bar=True)
             return g_loss
 
     def validation_step(self, batch, batch_idx):
