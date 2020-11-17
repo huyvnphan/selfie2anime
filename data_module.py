@@ -1,6 +1,7 @@
+import os
+
 import pytorch_lightning as pl
 import torch
-import os
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms as T
 
@@ -52,8 +53,8 @@ class AnimeDataModule(pl.LightningDataModule):
     def setup(self):
         make_dataset(self.data_path, "trainA")
         make_dataset(self.data_path, "trainB")
-        make_dataset(self.args.data_path, "testA")
-        make_dataset(self.args.data_path, "testB")
+        make_dataset(self.data_path, "testA")
+        make_dataset(self.data_path, "testB")
 
     def train_dataloader(self):
         dataset = AnimeDataset(self.data_path)
