@@ -8,29 +8,37 @@ from data_preprocess import make_dataset
 
 
 class AnimeDataset(Dataset):
-    def __init__(self, data_path):
+    def __init__(self, data_path, train=True):
         super().__init__()
-        self.trainA = torch.load(os.path.join(data_path, "trainA"))
-        self.trainB = torch.load(os.path.join(data_path, "trainA"))
-
         self.img_size = 256
-        self.transform = T.Compose(
-            [
-                T.RandomHorizontalFlip(),
-                T.Resize((self.img_size + 30, self.img_size + 30)),
-                T.RandomCrop(self.img_size),
-            ]
-        )
+
+        if self.train:
+            splits = ["trainA", "trainB"]
+            self.transform = T.Compose(
+                [
+                    T.RandomHorizontalFlip(),
+                    T.Resize((self.img_size + 30, self.img_size + 30)),
+                    T.RandomCrop(self.img_size),
+                ]
+            )
+        else:
+            splits = ["testA", "testB"]
+            self.transform = T.CenterCrop(self.img_size)
+
+        self.dataA = torch.load(os.path.join(data_path, splits[0]))
+        self.dataB = torch.load(os.path.join(data_path, splits[1]))
+
+        assert self.dataA.size(0) == self.dataB.size(0)
 
     def __len__(self):
-        return self.trainA.size(0)
+        if self.train:
+            return self.dataA.size(0)
+        else:
+            return 8
 
     def __getitem__(self, index):
-        indexB = torch.randint(0, self.trainB.size(0), (1,))
-        indexB = indexB.item()
-
-        imgA = self.transform(self.trainA[index])
-        imgB = self.transform(self.trainB[indexB])
+        imgA = self.transform(self.dataA[index])
+        imgB = self.transform(self.dataB[index])
         return imgA, imgB
 
 
@@ -44,8 +52,8 @@ class AnimeDataModule(pl.LightningDataModule):
     def setup(self):
         make_dataset(self.data_path, "trainA")
         make_dataset(self.data_path, "trainB")
-        # make_dataset(self.args.data_path, "testA")
-        # make_dataset(self.args.data_path, "testB")
+        make_dataset(self.args.data_path, "testA")
+        make_dataset(self.args.data_path, "testB")
 
     def train_dataloader(self):
         dataset = AnimeDataset(self.data_path)
@@ -55,5 +63,15 @@ class AnimeDataModule(pl.LightningDataModule):
             num_workers=self.no_workers,
             shuffle=True,
             drop_last=True,
+            pin_memory=True,
+        )
+
+    def val_dataloader(self):
+        dataset = AnimeDataset(self.data_path, train=False)
+        return DataLoader(
+            dataset,
+            batch_size=self.batch_size,
+            num_workers=self.no_workers,
+            shuffle=False,
             pin_memory=True,
         )
