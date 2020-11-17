@@ -11,12 +11,12 @@ from main_module import AnimeModule
 
 def main(args):
     seed_everything(1)
-    logger = WandbLogger(name=args.description, project="anime2selfie")
+    logger = WandbLogger(name=args.description, project="selfie2anime")
 
     if args.resume == "None":
         path = None
     else:
-        path = os.path.join("anime2selfie", args.resume, "checkpoints", "last.ckpt")
+        path = os.path.join("selfie2anime", args.resume, "checkpoints", "last.ckpt")
 
     checkpoint = ModelCheckpoint(monitor="g_loss", mode="min", save_last=True)
 
@@ -31,6 +31,7 @@ def main(args):
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
+        num_sanity_val_steps=0,
     )
 
     data = AnimeDataModule(args)
