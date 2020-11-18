@@ -61,10 +61,10 @@ class AnimeModule(pl.LightningModule):
         real_GB_logit, real_GB_cam_logit, _ = self.disGB(real_B)
         real_LB_logit, real_LB_cam_logit, _ = self.disLB(real_B)
 
-        fake_GA_logit, fake_GA_cam_logit, _ = self.disGA(fake_B2A)
-        fake_LA_logit, fake_LA_cam_logit, _ = self.disLA(fake_B2A)
-        fake_GB_logit, fake_GB_cam_logit, _ = self.disGB(fake_A2B)
-        fake_LB_logit, fake_LB_cam_logit, _ = self.disLB(fake_A2B)
+        fake_GA_logit, fake_GA_cam_logit, _ = self.disGA(fake_B2A.detach())
+        fake_LA_logit, fake_LA_cam_logit, _ = self.disLA(fake_B2A.detach())
+        fake_GB_logit, fake_GB_cam_logit, _ = self.disGB(fake_A2B.detach())
+        fake_LB_logit, fake_LB_cam_logit, _ = self.disLB(fake_A2B.detach())
 
         D_ad_loss_GA = self.MSE_loss(
             real_GA_logit, torch.ones_like(real_GA_logit)
