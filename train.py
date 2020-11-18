@@ -23,10 +23,10 @@ def main(args):
     trainer = Trainer(
         fast_dev_run=bool(args.dev),
         logger=logger,
-        gpus=[args.gpus_id],
+        gpus=[args.gpu_id],
         deterministic=True,
         weights_summary=None,
-        log_every_n_steps=1,
+        log_every_n_steps=10,
         precision=16,
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # TRAINER args
     parser.add_argument("--dev", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--gpus_id", type=int, default=3)
+    parser.add_argument("--gpu_id", type=int, default=3)
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--no_workers", type=int, default=8)
     parser.add_argument("--max_epochs", type=int, default=100)

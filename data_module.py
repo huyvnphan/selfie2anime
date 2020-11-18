@@ -27,8 +27,13 @@ class AnimeDataset(Dataset):
             splits = ["testA", "testB"]
             self.transform = T.Resize(self.hparams.img_size)
 
-        self.dataA = torch.load(os.path.join(self.hparams.data_path, splits[0] + ".pt"))
-        self.dataB = torch.load(os.path.join(self.hparams.data_path, splits[1] + ".pt"))
+        cpu = torch.device("cpu")
+        self.dataA = torch.load(
+            os.path.join(self.hparams.data_path, splits[0] + ".pt"), map_location=cpu
+        )
+        self.dataB = torch.load(
+            os.path.join(self.hparams.data_path, splits[1] + ".pt"), map_location=cpu
+        )
 
         assert self.dataA.size(0) == self.dataB.size(0)
 

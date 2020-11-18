@@ -166,6 +166,10 @@ class AnimeModule(pl.LightningModule):
         real_A, real_B = batch
 
         if optimizer_idx == 0:
+            # clip parameter of AdaILN and ILN
+            self.genA2B.apply(self.Rho_clipper)
+            self.genB2A.apply(self.Rho_clipper)
+
             d_loss = self.discriminator_loss(real_A, real_B)
             self.log("d_loss", d_loss, on_epoch=False, prog_bar=True)
             return d_loss
@@ -174,13 +178,6 @@ class AnimeModule(pl.LightningModule):
             g_loss = self.generator_loss(real_A, real_B)
             self.log("g_loss", g_loss, on_epoch=False, prog_bar=True)
             return g_loss
-
-    def backward(self, loss, optimizer, optimizer_idx):
-        loss.backward()
-        if optimizer_idx == 1:
-            # clip parameter of AdaILN and ILN
-            self.genA2B.apply(self.Rho_clipper)
-            self.genB2A.apply(self.Rho_clipper)
 
     def validation_step(self, batch, batch_idx):
         realA, _ = batch
