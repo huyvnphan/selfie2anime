@@ -31,7 +31,6 @@ def main(args):
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
-        accumulate_grad_batches=args.accum_grad,
         num_sanity_val_steps=0,
     )
 
@@ -60,7 +59,6 @@ if __name__ == "__main__":
     parser.add_argument("--gpus_id", type=int, default=3)
 
     parser.add_argument("--batch_size", type=int, default=4)
-    parser.add_argument("--accum_grad", type=int, default=4)
 
     parser.add_argument("--no_workers", type=int, default=8)
     parser.add_argument("--max_epochs", type=int, default=100)
