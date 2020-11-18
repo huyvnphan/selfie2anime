@@ -61,7 +61,7 @@ class AnimeDataModule(pl.LightningDataModule):
         parser.add_argument("--default_img_size", type=int, default=256)
         parser.add_argument("--train_img_size", type=int, default=256)
         parser.add_argument("--val_img_size", type=int, default=256)
-        parser.add_argument("--no_val_imgs", type=int, default=8)
+        parser.add_argument("--no_val_imgs", type=int, default=9)
         return parser
 
     def prepare_data(self):

@@ -183,7 +183,7 @@ class AnimeModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         realA, _ = batch
-        anime = make_grid(self(realA))
+        anime = make_grid(self(realA), nrow=3)
 
         anime_img_grid = [
             wandb.Image(anime, caption="Epoch_" + str(self.current_epoch))
