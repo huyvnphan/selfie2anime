@@ -11,6 +11,7 @@ from main_module import AnimeModule
 
 def main(args):
     seed_everything(1)
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
     logger = WandbLogger(name=args.description, project="selfie2anime")
 
     if args.resume == "None":
@@ -23,7 +24,7 @@ def main(args):
     trainer = Trainer(
         fast_dev_run=bool(args.dev),
         logger=logger,
-        gpus=[args.gpu_id],
+        gpus=-1,
         deterministic=True,
         weights_summary=None,
         log_every_n_steps=10,
@@ -31,6 +32,7 @@ def main(args):
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
         num_sanity_val_steps=0,
+        accelerator="ddp",
     )
 
     data = AnimeDataModule(args)
@@ -58,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpu_id", type=int, default=3)
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--no_workers", type=int, default=16)
-    parser.add_argument("--max_epochs", type=int, default=200)
+    parser.add_argument("--max_epochs", type=int, default=100)
     parser.add_argument("--resume", type=str, default="None")
     args = parser.parse_args()
     main(args)
