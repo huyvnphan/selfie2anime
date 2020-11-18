@@ -27,7 +27,6 @@ def main(args):
         deterministic=True,
         weights_summary=None,
         log_every_n_steps=10,
-        precision=16,
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
@@ -57,7 +56,7 @@ if __name__ == "__main__":
     # TRAINER args
     parser.add_argument("--dev", type=int, default=0, choices=[0, 1])
     parser.add_argument("--gpu_id", type=int, default=3)
-    parser.add_argument("--batch_size", type=int, default=1)
+    parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--no_workers", type=int, default=16)
     parser.add_argument("--max_epochs", type=int, default=200)
     parser.add_argument("--resume", type=str, default="None")
