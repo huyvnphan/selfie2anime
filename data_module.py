@@ -84,9 +84,5 @@ class AnimeDataModule(pl.LightningDataModule):
     def val_dataloader(self):
         dataset = AnimeDataset(self.hparams, train=False)
         return DataLoader(
-            dataset,
-            batch_size=self.hparams.no_val_imgs,
-            num_workers=self.hparams.no_workers,
-            pin_memory=True,
-            shuffle=False,
+            dataset, batch_size=self.hparams.no_val_imgs, pin_memory=True,
         )
