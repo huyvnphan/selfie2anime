@@ -68,7 +68,7 @@ class AnimeDataModule(pl.LightningDataModule):
             make_dataset(self.hparams.data_path, "trainB")
             make_dataset(self.hparams.data_path, "testA")
             make_dataset(self.hparams.data_path, "testB")
-            print("Finished prepare data.")
+            print("Finished preparing data.")
 
     def train_dataloader(self):
         dataset = AnimeDataset(self.hparams)
