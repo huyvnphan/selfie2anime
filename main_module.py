@@ -38,7 +38,7 @@ class AnimeModule(pl.LightningModule):
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument("--light_model", type=int, default=0, choices=[0, 1])
-        parser.add_argument("--lr", type=float, default=1e-3)
+        parser.add_argument("--lr", type=float, default=2e-4)
         parser.add_argument("--weight_decay", type=float, default=1e-4)
         parser.add_argument("--adv_weight", type=float, default=1.0)
         parser.add_argument("--cycle_weight", type=float, default=10.0)
@@ -214,7 +214,6 @@ class AnimeModule(pl.LightningModule):
         )
 
         reduce_lr = [
-            int(0.25 * self.hparams.max_epochs),
             int(0.50 * self.hparams.max_epochs),
             int(0.75 * self.hparams.max_epochs),
         ]
