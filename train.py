@@ -27,6 +27,7 @@ def main(args):
         gpus=-1,
         benchmark=True,
         weights_summary=None,
+        log_every_n_steps=1,
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
