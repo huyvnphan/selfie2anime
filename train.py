@@ -18,7 +18,9 @@ def main(args):
     else:
         path = os.path.join("selfie2anime", args.resume, "checkpoints", "last.ckpt")
 
-    checkpoint = ModelCheckpoint(monitor="g_loss", mode="min", save_last=True)
+    checkpoint = ModelCheckpoint(
+        monitor="g_loss", mode="min", save_top_k=3, save_last=True
+    )
 
     trainer = Trainer(
         fast_dev_run=bool(args.dev),
