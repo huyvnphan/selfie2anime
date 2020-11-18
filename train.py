@@ -31,7 +31,7 @@ def main(args):
         max_epochs=args.max_epochs,
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
-        num_sanity_val_steps=1,
+        num_sanity_val_steps=0,
     )
 
     data = AnimeDataModule(args)
