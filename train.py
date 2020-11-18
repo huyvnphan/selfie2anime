@@ -11,7 +11,7 @@ from main_module import AnimeModule
 
 def main(args):
     seed_everything(1)
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     logger = WandbLogger(name=args.description, project="selfie2anime")
 
     if args.resume == "None":
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     # TRAINER args
     parser.add_argument("--dev", type=int, default=0, choices=[0, 1])
-    parser.add_argument("--gpu_id", type=int, default=3)
+    parser.add_argument("--gpu_id", type=str, default="3")
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--no_workers", type=int, default=16)
     parser.add_argument("--max_epochs", type=int, default=100)
