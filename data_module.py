@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms as T
 
 from utils.data_preprocess import make_dataset
-from utils.dual_samplers import DualSampler
 
 
 class AnimeDataset(Dataset):
@@ -40,12 +39,8 @@ class AnimeDataset(Dataset):
             return self.hparams.no_val_imgs
 
     def __getitem__(self, index):
-        if type(index) is tuple:
-            imgA = self.transform(self.dataA[index[0]])
-            imgB = self.transform(self.dataB[index[1]])
-        else:
-            imgA = self.transform(self.dataA[index])
-            imgB = self.transform(self.dataB[index])
+        imgA = self.transform(self.dataA[index])
+        imgB = self.transform(self.dataB[index])
         return imgA, imgB
 
 
@@ -57,7 +52,7 @@ class AnimeDataModule(pl.LightningDataModule):
     @staticmethod
     def add_data_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument("--img_size", type=int, default=128)
+        parser.add_argument("--img_size", type=int, default=256)
         parser.add_argument("--no_val_imgs", type=int, default=8)
         return parser
 
@@ -72,21 +67,20 @@ class AnimeDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         dataset = AnimeDataset(self.hparams)
-        sampler = DualSampler(dataset)
         return DataLoader(
             dataset,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.no_workers,
             drop_last=True,
             pin_memory=True,
-            sampler=sampler,
+            shuffle=True,
         )
 
     def val_dataloader(self):
         dataset = AnimeDataset(self.hparams, train=False)
         return DataLoader(
             dataset,
-            batch_size=self.hparams.batch_size,
+            batch_size=self.hparams.no_val_imgs,
             num_workers=self.hparams.no_workers,
             pin_memory=True,
             shuffle=False,
