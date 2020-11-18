@@ -32,7 +32,6 @@ def main(args):
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
         num_sanity_val_steps=0,
-        precision=16,
     )
 
     data = AnimeDataModule(args)
