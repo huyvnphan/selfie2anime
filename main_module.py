@@ -11,9 +11,10 @@ from networks import Discriminator, ResnetGenerator, RhoClipper
 
 
 class AnimeModule(pl.LightningModule):
-    def __init__(self, args):
+    def __init__(self, args, max_steps):
         super().__init__()
         self.hparams = args
+        self.max_steps = max_steps
         self.save_hyperparameters(args)
 
         # Define Generator, Discriminator
@@ -210,21 +211,17 @@ class AnimeModule(pl.LightningModule):
             weight_decay=self.hparams.weight_decay,
         )
 
-        reduce_lr = [
-            int(0.5 * self.hparams.max_epochs),
-            int(0.75 * self.hparams.max_epochs),
-        ]
         D_scheduler = {
-            "scheduler": torch.optim.lr_scheduler.MultiStepLR(
-                D_optim, milestones=reduce_lr
+            "scheduler": torch.optim.lr_scheduler.CosineAnnealingLR(
+                D_optim, T_max=self.max_steps
             ),
-            "interval": "epoch",
+            "interval": "step",
         }
         G_scheduler = {
-            "scheduler": torch.optim.lr_scheduler.MultiStepLR(
-                G_optim, milestones=reduce_lr
+            "scheduler": torch.optim.lr_scheduler.CosineAnnealingLR(
+                G_optim, T_max=self.max_steps
             ),
-            "interval": "epoch",
+            "interval": "step",
         }
 
         return [D_optim, G_optim], [D_scheduler, G_scheduler]

@@ -35,7 +35,8 @@ def main(args):
     )
 
     data = AnimeDataModule(args)
-    model = AnimeModule(args)
+    max_steps = args.max_epochs * len(data.train_dataloader())
+    model = AnimeModule(args, max_steps)
     trainer.fit(model, data)
 
 
@@ -44,7 +45,7 @@ if __name__ == "__main__":
 
     # PROGRAM level args
     parser.add_argument("--description", type=str, default="Default")
-    parser.add_argument("--data_path", type=str, default="/data/huy/selfie2anime")
+    parser.add_argument("--data_path", type=str, default="/raid/data/huy/selfie2anime")
     parser.add_argument("--prepare_data", type=int, default=0)
 
     # MODULE specific args
