@@ -183,15 +183,19 @@ class AnimeModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         realA, _ = batch
-        anime = make_grid(self(realA), nrow=3)
+        anime = self(realA)
 
         anime_img_grid = [
-            wandb.Image(anime, caption="Epoch_" + str(self.current_epoch))
+            wandb.Image(
+                make_grid(anime, nrow=3), caption="Epoch_" + str(self.current_epoch)
+            )
         ]
         self.logger.experiment.log({"Anime_Image": anime_img_grid})
 
         if self.current_epoch == 0:
-            real_img_grid = [wandb.Image(realA, caption="Real_Image")]
+            real_img_grid = [
+                wandb.Image(make_grid(realA, nrow=3), caption="Real_Image")
+            ]
             self.logger.experiment.log({"Real_Image": real_img_grid})
 
     def configure_optimizers(self):
