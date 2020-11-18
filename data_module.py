@@ -19,14 +19,13 @@ class AnimeDataset(Dataset):
             self.transform = T.Compose(
                 [
                     T.RandomHorizontalFlip(),
-                    T.Resize(self.hparams.default_img_size + 30),
-                    T.RandomCrop(self.hparams.default_img_size),
-                    T.Resize(self.hparams.train_img_size),
+                    T.Resize(self.hparams.img_size + 30),
+                    T.RandomCrop(self.hparams.img_size),
                 ]
             )
         else:
             splits = ["testA", "testB"]
-            self.transform = T.Resize(self.hparams.val_img_size)
+            self.transform = T.Resize(self.hparams.img_size)
 
         cpu = torch.device("cpu")
         self.dataA = torch.load(
@@ -58,9 +57,7 @@ class AnimeDataModule(pl.LightningDataModule):
     @staticmethod
     def add_data_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument("--default_img_size", type=int, default=256)
-        parser.add_argument("--train_img_size", type=int, default=256)
-        parser.add_argument("--val_img_size", type=int, default=256)
+        parser.add_argument("--img_size", type=int, default=256)
         parser.add_argument("--no_val_imgs", type=int, default=9)
         return parser
 

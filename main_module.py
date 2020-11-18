@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 from torchvision.utils import make_grid
-from torch.optim.lr_scheduler import MultiStepLR
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.optim import AdamW
 
 import wandb
@@ -13,9 +13,10 @@ from networks import Discriminator, ResnetGenerator, RhoClipper
 
 
 class AnimeModule(pl.LightningModule):
-    def __init__(self, args):
+    def __init__(self, args, max_steps):
         super().__init__()
         self.hparams = args
+        self.max_steps = max_steps
         self.save_hyperparameters(args)
 
         # Define Generator, Discriminator
@@ -216,18 +217,12 @@ class AnimeModule(pl.LightningModule):
             betas=(0.5, 0.999),
             weight_decay=self.hparams.weight_decay,
         )
-
-        reduce_lr = [
-            int(0.50 * self.hparams.max_epochs),
-            int(0.75 * self.hparams.max_epochs),
-            int(0.95 * self.hparams.max_epochs),
-        ]
         D_scheduler = {
-            "scheduler": MultiStepLR(D_optim, milestones=reduce_lr),
-            "interval": "epoch",
+            "scheduler": CosineAnnealingLR(D_optim, T_max=self.max_steps),
+            "interval": "step",
         }
         G_scheduler = {
-            "scheduler": MultiStepLR(G_optim, milestones=reduce_lr),
-            "interval": "epoch",
+            "scheduler": CosineAnnealingLR(G_optim, T_max=self.max_steps),
+            "interval": "step",
         }
         return [D_optim, G_optim], [D_scheduler, G_scheduler]

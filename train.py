@@ -35,7 +35,8 @@ def main(args):
     )
 
     data = AnimeDataModule(args)
-    model = AnimeModule(args)
+    max_steps = args.max_epochs * len(data.train_dataloader())
+    model = AnimeModule(args, max_steps)
     trainer.fit(model, data)
 
 
@@ -56,7 +57,7 @@ if __name__ == "__main__":
     # TRAINER args
     parser.add_argument("--dev", type=int, default=0, choices=[0, 1])
     parser.add_argument("--gpu_id", type=int, default=3)
-    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--no_workers", type=int, default=8)
     parser.add_argument("--max_epochs", type=int, default=200)
     parser.add_argument("--resume", type=str, default="None")
