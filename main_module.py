@@ -216,7 +216,7 @@ class AnimeModule(pl.LightningModule):
         reduce_lr = [
             int(0.50 * self.hparams.max_epochs),
             int(0.75 * self.hparams.max_epochs),
-            int(0.90 * self.hparams.max_epochs),
+            int(0.95 * self.hparams.max_epochs),
         ]
         D_scheduler = {
             "scheduler": MultiStepLR(D_optim, milestones=reduce_lr),
