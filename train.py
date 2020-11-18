@@ -1,7 +1,7 @@
 import os
 from argparse import ArgumentParser
 
-from pytorch_lightning import Trainer, seed_everything
+from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 
@@ -10,7 +10,6 @@ from main_module import AnimeModule
 
 
 def main(args):
-    seed_everything(1)
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     logger = WandbLogger(name=args.description, project="selfie2anime")
 
