@@ -5,16 +5,17 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 from torchvision.utils import make_grid
+from torch.optim.lr_scheduler import MultiStepLR
+from torch.optim import AdamW
 
 import wandb
 from networks import Discriminator, ResnetGenerator, RhoClipper
 
 
 class AnimeModule(pl.LightningModule):
-    def __init__(self, args, max_steps):
+    def __init__(self, args):
         super().__init__()
         self.hparams = args
-        self.max_steps = max_steps
         self.save_hyperparameters(args)
 
         # Define Generator, Discriminator
@@ -36,7 +37,7 @@ class AnimeModule(pl.LightningModule):
     @staticmethod
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument("--lr", type=float, default=2e-4)
+        parser.add_argument("--lr", type=float, default=1e-3)
         parser.add_argument("--weight_decay", type=float, default=1e-4)
         parser.add_argument("--adv_weight", type=float, default=1.0)
         parser.add_argument("--cycle_weight", type=float, default=10.0)
@@ -193,7 +194,7 @@ class AnimeModule(pl.LightningModule):
             self.logger.experiment.log({"Real_Image": real_img_grid})
 
     def configure_optimizers(self):
-        D_optim = torch.optim.Adam(
+        D_optim = AdamW(
             itertools.chain(
                 self.disGA.parameters(),
                 self.disGB.parameters(),
@@ -204,24 +205,24 @@ class AnimeModule(pl.LightningModule):
             betas=(0.5, 0.999),
             weight_decay=self.hparams.weight_decay,
         )
-        G_optim = torch.optim.Adam(
+        G_optim = AdamW(
             itertools.chain(self.genA2B.parameters(), self.genB2A.parameters()),
             lr=self.hparams.lr,
             betas=(0.5, 0.999),
             weight_decay=self.hparams.weight_decay,
         )
 
+        reduce_lr = [
+            int(0.25 * self.hparams.max_epochs),
+            int(0.50 * self.hparams.max_epochs),
+            int(0.75 * self.hparams.max_epochs),
+        ]
         D_scheduler = {
-            "scheduler": torch.optim.lr_scheduler.CosineAnnealingLR(
-                D_optim, T_max=self.max_steps
-            ),
-            "interval": "step",
+            "scheduler": MultiStepLR(D_optim, milestones=reduce_lr),
+            "interval": "epoch",
         }
         G_scheduler = {
-            "scheduler": torch.optim.lr_scheduler.CosineAnnealingLR(
-                G_optim, T_max=self.max_steps
-            ),
-            "interval": "step",
+            "scheduler": MultiStepLR(G_optim, milestones=reduce_lr),
+            "interval": "epoch",
         }
-
         return [D_optim, G_optim], [D_scheduler, G_scheduler]

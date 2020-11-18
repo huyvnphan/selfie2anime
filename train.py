@@ -35,8 +35,7 @@ def main(args):
     )
 
     data = AnimeDataModule(args)
-    max_steps = args.max_epochs * len(data.train_dataloader())
-    model = AnimeModule(args, max_steps)
+    model = AnimeModule(args)
     trainer.fit(model, data)
 
 
