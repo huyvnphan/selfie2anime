@@ -20,8 +20,8 @@ class AnimeModule(pl.LightningModule):
         self.save_hyperparameters(args)
 
         # Define Generator, Discriminator
-        self.genA2B = ResnetGenerator(light=bool(self.hparams.light_model))
-        self.genB2A = ResnetGenerator(light=bool(self.hparams.light_model))
+        self.genA2B = ResnetGenerator(img_size=self.hparams.img_size)
+        self.genB2A = ResnetGenerator(img_size=self.hparams.img_size)
         self.disGA = Discriminator(n_layers=7)
         self.disGB = Discriminator(n_layers=7)
         self.disLA = Discriminator(n_layers=5)
@@ -38,7 +38,6 @@ class AnimeModule(pl.LightningModule):
     @staticmethod
     def add_model_specific_args(parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument("--light_model", type=int, default=0, choices=[0, 1])
         parser.add_argument("--lr", type=float, default=2e-4)
         parser.add_argument("--weight_decay", type=float, default=1e-4)
         parser.add_argument("--adv_weight", type=float, default=1.0)

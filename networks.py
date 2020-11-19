@@ -5,7 +5,7 @@ from torch.nn.parameter import Parameter
 
 class ResnetGenerator(nn.Module):
     def __init__(
-        self, input_nc=3, output_nc=3, ngf=64, n_blocks=6, img_size=256, light=False
+        self, input_nc=3, output_nc=3, ngf=64, n_blocks=4, img_size=256, light=False
     ):
         assert n_blocks >= 0
         super(ResnetGenerator, self).__init__()
@@ -207,12 +207,14 @@ class adaILN(nn.Module):
         self.rho.data.fill_(0.9)
 
     def forward(self, input, gamma, beta):
-        in_mean, in_var = torch.mean(input, dim=[2, 3], keepdim=True), torch.var(
-            input, dim=[2, 3], keepdim=True
+        in_mean, in_var = (
+            torch.mean(input, dim=[2, 3], keepdim=True),
+            torch.var(input, dim=[2, 3], keepdim=True),
         )
         out_in = (input - in_mean) / torch.sqrt(in_var + self.eps)
-        ln_mean, ln_var = torch.mean(input, dim=[1, 2, 3], keepdim=True), torch.var(
-            input, dim=[1, 2, 3], keepdim=True
+        ln_mean, ln_var = (
+            torch.mean(input, dim=[1, 2, 3], keepdim=True),
+            torch.var(input, dim=[1, 2, 3], keepdim=True),
         )
         out_ln = (input - ln_mean) / torch.sqrt(ln_var + self.eps)
         out = (
@@ -236,12 +238,14 @@ class ILN(nn.Module):
         self.beta.data.fill_(0.0)
 
     def forward(self, input):
-        in_mean, in_var = torch.mean(input, dim=[2, 3], keepdim=True), torch.var(
-            input, dim=[2, 3], keepdim=True
+        in_mean, in_var = (
+            torch.mean(input, dim=[2, 3], keepdim=True),
+            torch.var(input, dim=[2, 3], keepdim=True),
         )
         out_in = (input - in_mean) / torch.sqrt(in_var + self.eps)
-        ln_mean, ln_var = torch.mean(input, dim=[1, 2, 3], keepdim=True), torch.var(
-            input, dim=[1, 2, 3], keepdim=True
+        ln_mean, ln_var = (
+            torch.mean(input, dim=[1, 2, 3], keepdim=True),
+            torch.var(input, dim=[1, 2, 3], keepdim=True),
         )
         out_ln = (input - ln_mean) / torch.sqrt(ln_var + self.eps)
         out = (
