@@ -33,7 +33,6 @@ def main(args):
         resume_from_checkpoint=path,
         checkpoint_callback=checkpoint,
         num_sanity_val_steps=0,
-        precision=args.precision,
     )
 
     data = AnimeDataModule(args)
@@ -59,10 +58,9 @@ if __name__ == "__main__":
     # TRAINER args
     parser.add_argument("--dev", type=int, default=0, choices=[0, 1])
     parser.add_argument("--gpu_id", type=str, default="3")
-    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--batch_size", type=int, default=3)
     parser.add_argument("--no_workers", type=int, default=16)
-    parser.add_argument("--max_epochs", type=int, default=100)
-    parser.add_argument("--precision", type=int, default=16, choices=[16, 32])
+    parser.add_argument("--max_epochs", type=int, default=150)
     parser.add_argument("--resume", type=str, default="None")
     args = parser.parse_args()
     main(args)
