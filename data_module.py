@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms as T
 
 from utils.data_preprocess import make_dataset
+from utils.dual_sampler import DualSampler
 
 
 class AnimeDataset(Dataset):
@@ -44,8 +45,12 @@ class AnimeDataset(Dataset):
             return self.hparams.no_val_imgs
 
     def __getitem__(self, index):
-        imgA = self.transform(self.dataA[index])
-        imgB = self.transform(self.dataB[index])
+        if self.train:
+            imgA = self.transform(self.dataA[index[0]])
+            imgB = self.transform(self.dataB[index[1]])
+        else:
+            imgA = self.transform(self.dataA[index])
+            imgB = self.transform(self.dataB[index])
         return imgA, imgB
 
 
@@ -72,13 +77,14 @@ class AnimeDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         dataset = AnimeDataset(self.hparams)
+        sampler = DualSampler(dataset)
         return DataLoader(
             dataset,
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.no_workers,
             drop_last=True,
             pin_memory=True,
-            shuffle=True,
+            sampler=sampler,
         )
 
     def val_dataloader(self):
