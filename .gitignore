@@ -1,6 +1,7 @@
 # Log folder
 selfie2anime/
 wandb/
+*.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
